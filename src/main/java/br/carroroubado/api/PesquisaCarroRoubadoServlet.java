@@ -1,8 +1,10 @@
 package br.carroroubado.api;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,10 +31,21 @@ public class PesquisaCarroRoubadoServlet extends HttpServlet {
 				.image(Image.builder().bytes(SdkBytes.fromInputStream(req.getInputStream())).build())
 				.build());
 
-		Map<String, Float> texts = new HashMap<>();
-		response.textDetections().forEach(text -> texts.put(text.detectedText(), text.confidence()));
+		Placa placa = Placa.fromRekognitionResponse(response);
 
-		resp.addHeader("Content-Type", "application/json");
-		resp.getWriter().println(new Gson().toJson(texts));
+		try (Connection connection = DatabaseManager.getConnection()) {
+			String sql = "select count(*) from placa where placa = ? and localizacao = ?";
+			try (PreparedStatement ps = connection.prepareStatement(sql)) {
+				ps.setString(1, placa.getNumeracao());
+				ps.setString(2, placa.getLocalizacao());
+				try (ResultSet rs = ps.executeQuery()) {
+					placa.setRoubado(rs.next());
+					resp.addHeader("Content-Type", "application/json");
+					resp.getWriter().println(new Gson().toJson(placa));
+				}
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
