@@ -10,6 +10,7 @@ public class App {
 		Server server = new Server(8080);
 		ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		handler.setContextPath("/carros");
+		handler.setMaxFormContentSize(2 * 1024 * 1024);
 		server.setHandler(handler);
 		handler.addServlet(PesquisaCarroRoubadoServlet.class, "/pesquisa/*");
 		server.start();
