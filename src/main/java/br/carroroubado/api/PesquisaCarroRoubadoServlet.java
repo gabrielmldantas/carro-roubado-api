@@ -1,6 +1,9 @@
 package br.carroroubado.api;
 
+
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,9 +29,15 @@ public class PesquisaCarroRoubadoServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println("");
+		Gson gson = new Gson();
+		ObjetoRequisicao objetoRequisicao = null;
+		try (Reader reader = new InputStreamReader(req.getInputStream())) {
+			objetoRequisicao = gson.fromJson(reader, ObjetoRequisicao.class);
+		}
 		RekognitionClient client = AwsClientBuilder.buildClient();
 		DetectTextResponse response = client.detectText(DetectTextRequest.builder()
-				.image(Image.builder().bytes(SdkBytes.fromInputStream(req.getInputStream())).build())
+				.image(Image.builder().bytes(SdkBytes.fromByteArray(objetoRequisicao.getBuffer())).build())
 				.build());
 
 		Placa placa = Placa.fromRekognitionResponse(response);
@@ -41,7 +50,8 @@ public class PesquisaCarroRoubadoServlet extends HttpServlet {
 				try (ResultSet rs = ps.executeQuery()) {
 					placa.setRoubado(rs.next());
 					resp.addHeader("Content-Type", "application/json");
-					resp.getWriter().println(new Gson().toJson(placa));
+					System.out.println(gson.toJson(placa));
+					resp.getWriter().println(gson.toJson(placa));
 				}
 			}
 		} catch (SQLException e) {
