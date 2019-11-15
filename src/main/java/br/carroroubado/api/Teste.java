@@ -21,7 +21,7 @@ public class Teste extends HttpServlet {
 		resp.addHeader("Content-Type", "application/json");
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.add("mensagem", new JsonPrimitive("Hello world"));
-		resp.getWriter().println(new Gson().toJson(jsonObject));
+		resp.getWriter().print(new Gson().toJson(jsonObject));
 	}
 }
 

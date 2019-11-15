@@ -52,7 +52,7 @@ public class PesquisaCarroRoubadoServlet extends HttpServlet {
 					try (ResultSet rs = ps.executeQuery()) {
 						placa.setRoubado(rs.next());
 						System.out.println(gson.toJson(placa));
-						resp.getWriter().println(gson.toJson(placa));
+						resp.getWriter().print(gson.toJson(placa));
 					}
 				}
 			}
@@ -61,7 +61,7 @@ public class PesquisaCarroRoubadoServlet extends HttpServlet {
 			JsonObject jsonObject = new JsonObject();
 			jsonObject.add("excecao", new JsonPrimitive(e.getClass().getCanonicalName()));
 			jsonObject.add("mensagem", new JsonPrimitive(e.getMessage() != null ? e.getMessage() : ""));
-			resp.getWriter().println(gson.toJson(jsonObject));
+			resp.getWriter().print(gson.toJson(jsonObject));
 		}
 	}
 }
