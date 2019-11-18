@@ -81,6 +81,7 @@ public class Placa {
         Placa placa = new Placa();
 
         for (TextDetection textDetection : response.textDetections()) {
+        	System.out.println(String.format("%s - %s", textDetection.type(), textDetection.detectedText()));
             if (textDetection.type() == TextTypes.WORD) {
                 if (REGEX_DIGITO.matcher(textDetection.detectedText()).matches()) {
                     numeracoesByConfidence.put(textDetection.detectedText().replaceAll("\\W", ""), textDetection.confidence());

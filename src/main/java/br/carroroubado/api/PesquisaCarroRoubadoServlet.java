@@ -4,9 +4,6 @@ package br.carroroubado.api;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Base64;
 
 import javax.servlet.ServletException;
@@ -40,7 +37,8 @@ public class PesquisaCarroRoubadoServlet extends HttpServlet {
             }
             RekognitionClient client = AwsClientBuilder.buildClient();
             DetectTextResponse response = client.detectText(DetectTextRequest.builder()
-                    .image(Image.builder().bytes(SdkBytes.fromByteArray(objetoRequisicao.getBuffer())).build())
+                    .image(Image.builder().bytes(SdkBytes.fromByteArray(Base64.getDecoder()
+                    		.decode(objetoRequisicao.getBuffer()))).build())
                     .build());
 
             Placa placa = Placa.fromRekognitionResponse(response);
