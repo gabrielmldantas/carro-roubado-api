@@ -2,13 +2,13 @@ package br.carroroubado.api;
 
 public class ObjetoRequisicao {
 
-	private byte[] buffer;
+	private String buffer;
 
-	public byte[] getBuffer() {
+	public String getBuffer() {
 		return buffer;
 	}
 
-	public void setBuffer(byte[] buffer) {
+	public void setBuffer(String buffer) {
 		this.buffer = buffer;
 	}
 }
