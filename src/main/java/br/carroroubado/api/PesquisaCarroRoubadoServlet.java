@@ -4,9 +4,6 @@ package br.carroroubado.api;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -43,20 +40,9 @@ public class PesquisaCarroRoubadoServlet extends HttpServlet {
                     .build());
 
             Placa placa = Placa.fromRekognitionResponse(response);
-
-            try (Connection connection = DatabaseManager.getConnection()) {
-                String sql = "select count(*) from placa where placa = ? and localizacao = ?";
-                try (PreparedStatement ps = connection.prepareStatement(sql)) {
-                    ps.setString(1, placa.getNumeracao());
-                    ps.setString(2, placa.getLocalizacao());
-                    try (ResultSet rs = ps.executeQuery()) {
-                        rs.next();
-                        placa.setRoubado(rs.getBoolean(1));
-                        System.out.println(gson.toJson(placa));
-                        resp.getWriter().print(gson.toJson(placa));
-                    }
-                }
-            }
+            placa.setRoubado(new PlacaDao().isPlacaRoubada(placa.getNumeracao(), placa.getLocalizacao()));
+            System.out.println(gson.toJson(placa));
+            resp.getWriter().print(gson.toJson(placa));
         } catch (Exception e) {
             e.printStackTrace();
             JsonObject jsonObject = new JsonObject();
