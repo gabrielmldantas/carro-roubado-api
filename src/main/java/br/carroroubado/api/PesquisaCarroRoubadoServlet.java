@@ -50,7 +50,8 @@ public class PesquisaCarroRoubadoServlet extends HttpServlet {
                     ps.setString(1, placa.getNumeracao());
                     ps.setString(2, placa.getLocalizacao());
                     try (ResultSet rs = ps.executeQuery()) {
-                        placa.setRoubado(rs.next());
+                        rs.next();
+                        placa.setRoubado(rs.getBoolean(1));
                         System.out.println(gson.toJson(placa));
                         resp.getWriter().print(gson.toJson(placa));
                     }
