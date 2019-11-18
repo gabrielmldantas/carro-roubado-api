@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Verificação de Placa</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <div id="alertContainer" style="margin-top: 10px; margin-left: auto; margin-right: auto; width: 400px;"></div>
+
+        <form action="/carros/verificar/" method="POST" enctype="multipart/form-data"
+            style="margin-left: auto; margin-right: auto; margin-top: 10px; padding: 5px; width: 400px;">
+            <div class="form-group">
+                <label for="placa">Placa</label>
+                <input type="file" name="placa" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Verificar</button>
+        </form>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <script type="text/javascript">
+            function criarAlert(mensagem, tipo) {
+                var divAlert = document.createElement('div');
+                divAlert.classList.add('alert');
+                divAlert.classList.add('alert-' + tipo);
+                divAlert.classList.add('alert-dismissible');
+                divAlert.classList.add('fade');
+                divAlert.classList.add('show');
+                divAlert.textContent = mensagem;
+
+                var buttonClose = document.createElement('button');
+                buttonClose.classList.add('close');
+                buttonClose.setAttribute('data-dismiss', 'alert');
+                var textoButtonClose = document.createElement('span');
+                textoButtonClose.textContent = 'x'
+                buttonClose.appendChild(textoButtonClose);
+                divAlert.appendChild(buttonClose);
+
+                document.getElementById('alertContainer').appendChild(divAlert);
+            }
+
+            let url = new URL(location.href);
+            let placaRoubada = url.searchParams.get('roubada');
+            if (placaRoubada === 'true') {
+                criarAlert('A placa ' + url.searchParams.get('numeroPlaca') + ' (' + url.searchParams.get('localizacao') + ')'
+                        + ' está registrada como roubada.', 'success');
+            } else if (placaRoubada === 'false') {
+                criarAlert('A placa ' + url.searchParams.get('numeroPlaca') + ' (' + url.searchParams.get('localizacao') + ')'
+                        + ' não está registrada como roubada.', 'warning');
+            } else if (url.searchParams.get('erro') === 'formatoInvalido') {
+                criarAlert("Formato inválido de imagem. São aceitos apenas os formatos PNG e JPEG.", 'danger');
+            }
+        </script>
+    </body>
+</html>
